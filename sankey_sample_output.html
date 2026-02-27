@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sankey Widget — Sample Output</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.0.0/echarts.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0f1117;
+    --surface:   #181c27;
+    --border:    #262c3d;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --accent:    #38bdf8;
+    --green0:    #348B26;
+    --green1:    #4FB81C;
+    --green2:    #93C939;
+    --green3:    #BCDC50;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .sac-logo {
+    background: var(--green1);
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .topbar-title {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .badge {
+    margin-left: auto;
+    background: rgba(56,189,248,0.12);
+    border: 1px solid rgba(56,189,248,0.3);
+    color: var(--accent);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── Main card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── Dimension pills ── */
+  .dim-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .pill-src  { background: rgba(52,139,38,0.2);  border: 1px solid rgba(52,139,38,0.5);  color: #6ee75e; }
+  .pill-arr  { color: var(--muted); font-size: 16px; }
+  .pill-tgt  { background: rgba(188,220,80,0.15); border: 1px solid rgba(188,220,80,0.4); color: #d4ed6a; }
+  .pill-msr  { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: var(--accent); margin-left: 8px; }
+
+  /* ── Chart area ── */
+  .chart-wrap {
+    padding: 1.5rem;
+    position: relative;
+  }
+  #chart {
+    width: 100%;
+    height: 480px;
+  }
+
+  /* ── Stats row ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+  }
+  .stat {
+    background: var(--surface);
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text);
+  }
+  .stat-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── Styling panel ── */
+  .side-panel {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    width: 200px;
+    font-size: 12px;
+  }
+  .side-panel-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  .depth-row {
+    margin-bottom: 12px;
+  }
+  .depth-label {
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .depth-swatch {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .depth-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .depth-input-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .depth-input-row span {
+    color: var(--muted);
+    width: 55px;
+    font-size: 11px;
+  }
+  .depth-input-row input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    width: 100%;
+  }
+  .depth-input-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .apply-btn {
+    width: 100%;
+    margin-top: 12px;
+    background: var(--green1);
+    color: #fff;
+    border: none;
+    padding: 7px;
+    border-radius: 5px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .apply-btn:hover { background: var(--green0); }
+
+  /* ── Info note ── */
+  .info-note {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* ── Click info toast ── */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1e2535;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <span class="sac-logo">SAC</span>
+  <span class="topbar-title">Custom Widget Preview — EChartsSankeyStyling v1.0.2</span>
+  <span class="badge">dim-to-dim mode</span>
+</div>
+
+<!-- Main chart card -->
+<div class="card" style="margin-right: 230px;">
+  <div class="card-header">
+    <div>
+      <div class="card-title">Financial Flow Analysis</div>
+      <div class="card-subtitle">Transaction amount disbursed by country pair</div>
+    </div>
+    <div class="dim-pills">
+      <span class="pill pill-src">Client Domicile Country</span>
+      <span class="pill-arr">→</span>
+      <span class="pill pill-tgt">Booking Country</span>
+      <span class="pill pill-msr">Amount (USD)</span>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <div id="chart"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-label">Total Flow</span>
+      <span class="stat-value" id="stat-total">$0</span>
+      <span class="stat-sub">across all pairs</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Source Countries</span>
+      <span class="stat-value" id="stat-src">0</span>
+      <span class="stat-sub">client domicile</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Booking Countries</span>
+      <span class="stat-value" id="stat-tgt">0</span>
+      <span class="stat-sub">transaction booked</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Flow Pairs</span>
+      <span class="stat-value" id="stat-pairs">0</span>
+      <span class="stat-sub">unique routes</span>
+    </div>
+  </div>
+
+  <div class="info-note">
+    <span class="info-dot"></span>
+    Click any node or flow line to simulate Linked Analysis filter — the selected member ID would be passed to <code style="color:#94a3b8">linkedAnalysis.setFilters()</code>
+  </div>
+</div>
+
+<!-- Styling Panel (simulates SAC Styling Tab) -->
+<div class="side-panel">
+  <div class="side-panel-title">Styling Panel</div>
+
+  <div class="depth-row">
+    <div class="depth-label">
+      <span class="depth-swatch" style="background:#348B26"></span>
+      Depth 0 — Source
+    </div>
+    <div class="depth-inputs">
+      <div class="depth-input-row"><span>Color</span><input id="d0color" value="#348B26"/></div>
+      <div class="depth-input-row"><span>Opacity</span><input id="d0opacity" value="0.6"/></div>
+    </div>
+  </div>
+
+  <div class="depth-row">
+    <div class="depth-label">
+      <span class="depth-swatch" style="background:#BCDC50"></span>
+      Depth 1 — Target
+    </div>
+    <div class="depth-inputs">
+      <div class="depth-input-row"><span>Color</span><input id="d1color" value="#BCDC50"/></div>
+      <div class="depth-input-row"><span>Opacity</span><input id="d1opacity" value="0.4"/></div>
+    </div>
+  </div>
+
+  <button class="apply-btn" onclick="applyStyles()">Apply Styles</button>
+</div>
+
+<div id="toast">🔗 Linked Analysis filter applied</div>
+
+<script>
+// ── Sample data mimicking SAC dataBinding.data rows ──
+const rawData = [
+  { src: 'Germany',        tgt: 'Luxembourg',      val: 4200000 },
+  { src: 'Germany',        tgt: 'Switzerland',     val: 3100000 },
+  { src: 'Germany',        tgt: 'United Kingdom',  val: 1800000 },
+  { src: 'France',         tgt: 'Luxembourg',      val: 3800000 },
+  { src: 'France',         tgt: 'Switzerland',     val: 2500000 },
+  { src: 'France',         tgt: 'Singapore',       val: 1200000 },
+  { src: 'United States',  tgt: 'Luxembourg',      val: 5600000 },
+  { src: 'United States',  tgt: 'Singapore',       val: 4100000 },
+  { src: 'United States',  tgt: 'United Kingdom',  val: 2900000 },
+  { src: 'Switzerland',    tgt: 'Luxembourg',      val: 2200000 },
+  { src: 'Switzerland',    tgt: 'Singapore',       val: 1700000 },
+  { src: 'United Kingdom', tgt: 'Luxembourg',      val: 1500000 },
+  { src: 'United Kingdom', tgt: 'Switzerland',     val: 900000  },
+  { src: 'Singapore',      tgt: 'Luxembourg',      val: 800000  },
+  { src: 'Japan',          tgt: 'Singapore',       val: 2300000 },
+  { src: 'Japan',          tgt: 'Switzerland',     val: 1600000 },
+]
+
+// ── Replicate buildDimToDimChart() from main.js ──
+function buildChart(data, d0color, d0opacity, d1color, d1opacity) {
+  const sourceNodeSet = new Map()
+  const targetNodeSet = new Map()
+  const linkMap       = new Map()
+
+  data.forEach(row => {
+    const sourceLabel = row.src
+    const targetLabel = row.tgt
+    const value       = row.val
+    if (!sourceLabel || !targetLabel || value == null) return
+
+    const srcName = 'SRC_' + sourceLabel
+    const tgtName = 'TGT_' + targetLabel
+
+    if (!sourceNodeSet.has(srcName)) {
+      sourceNodeSet.set(srcName, {
+        name: srcName, depth: 0,
+        label: { formatter: () => sourceLabel }
+      })
+    }
+    if (!targetNodeSet.has(tgtName)) {
+      targetNodeSet.set(tgtName, {
+        name: tgtName, depth: 1,
+        label: { formatter: () => targetLabel }
+      })
+    }
+
+    const linkKey = srcName + '||' + tgtName
+    const ex = linkMap.get(linkKey)
+    if (ex) { ex.value += value }
+    else { linkMap.set(linkKey, { source: srcName, target: tgtName, value }) }
+  })
+
+  return {
+    nodes: [...sourceNodeSet.values(), ...targetNodeSet.values()],
+    links: [...linkMap.values()]
+  }
+}
+
+// ── Stats ──
+function updateStats(data, links) {
+  const total  = data.reduce((s, r) => s + r.val, 0)
+  const srcSet = new Set(data.map(r => r.src))
+  const tgtSet = new Set(data.map(r => r.tgt))
+  document.getElementById('stat-total').textContent  = '$' + (total/1e6).toFixed(1) + 'M'
+  document.getElementById('stat-src').textContent   = srcSet.size
+  document.getElementById('stat-tgt').textContent   = tgtSet.size
+  document.getElementById('stat-pairs').textContent = links.length
+}
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.classList.add('show')
+  setTimeout(() => t.classList.remove('show'), 3000)
+}
+
+// ── Init chart ──
+let chart = echarts.init(document.getElementById('chart'), null, { renderer: 'canvas' })
+
+function renderChart() {
+  const d0color   = document.getElementById('d0color').value   || '#348B26'
+  const d0opacity = parseFloat(document.getElementById('d0opacity').value) || 0.6
+  const d1color   = document.getElementById('d1color').value   || '#BCDC50'
+  const d1opacity = parseFloat(document.getElementById('d1opacity').value) || 0.4
+
+  const { nodes, links } = buildChart(rawData, d0color, d0opacity, d1color, d1opacity)
+  updateStats(rawData, links)
+
+  chart.setOption({
+    backgroundColor: 'transparent',
+    title: { text: '' },
+    tooltip: {
+      trigger: 'item',
+      triggerOn: 'mousemove',
+      backgroundColor: '#1e2535',
+      borderColor: '#262c3d',
+      textStyle: { color: '#e2e8f0', fontFamily: 'IBM Plex Mono', fontSize: 12 },
+      formatter: (params) => {
+        if (params.dataType === 'edge') {
+          const src = params.data.source.replace(/^SRC_/, '')
+          const tgt = params.data.target.replace(/^TGT_/, '')
+          const val = params.data.value.toLocaleString(undefined, { maximumFractionDigits: 0 })
+          return `<b>${src}</b> → <b>${tgt}</b><br/>Amount: <b style="color:#6ee75e">$${val}</b>`
+        }
+        if (params.dataType === 'node') {
+          const name = (params.data.name||'').replace(/^SRC_/,'').replace(/^TGT_/,'')
+          const isSource = (params.data.name||'').startsWith('SRC_')
+          const role = isSource ? '🟢 Source (Client Domicile)' : '🟡 Target (Booking Country)'
+          return `<b>${name}</b><br/><span style="color:#64748b">${role}</span>`
+        }
+        return params.name
+      }
+    },
+    series: [{
+      type: 'sankey',
+      data: nodes,
+      links: links,
+      emphasis: { focus: 'adjacency' },
+      nodeWidth: 18,
+      nodeGap: 14,
+      label: {
+        color: '#e2e8f0',
+        fontFamily: 'IBM Plex Sans',
+        fontSize: 12,
+        formatter: (p) => (p.name||'').replace(/^SRC_/,'').replace(/^TGT_/,'')
+      },
+      levels: [
+        {
+          depth: 0,
+          itemStyle: { color: d0color },
+          lineStyle: { color: 'source', opacity: d0opacity }
+        },
+        {
+          depth: 1,
+          itemStyle: { color: d1color },
+          lineStyle: { color: 'source', opacity: d1opacity }
+        }
+      ],
+      lineStyle: { curveness: 0.7 }
+    }]
+  }, true)
+
+  // Click handler — simulates linkedAnalysis.setFilters()
+  chart.off('click')
+  chart.on('click', (params) => {
+    if (params.dataType === 'node') {
+      const raw     = params.data.name || ''
+      const isSource = raw.startsWith('SRC_')
+      const clean   = raw.replace(/^SRC_/,'').replace(/^TGT_/,'')
+      const dim     = isSource ? 'ClientDomicileCountry' : 'BookingCountry'
+      showToast(`🔗 setFilters({ ${dim}: "${clean}" })`)
+    } else if (params.dataType === 'edge') {
+      const src = (params.data.source||'').replace(/^SRC_/,'')
+      const tgt = (params.data.target||'').replace(/^TGT_/,'')
+      showToast(`🔗 setFilters({ ClientDomicileCountry: "${src}", BookingCountry: "${tgt}" })`)
+    } else {
+      showToast('🔗 removeFilters()')
+    }
+  })
+}
+
+function applyStyles() { renderChart() }
+
+// Initial render
+renderChart()
+
+// Resize
+window.addEventListener('resize', () => chart.resize())
+</script>
+</body>
+</html>
