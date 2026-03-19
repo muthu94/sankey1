@@ -1,0 +1,242 @@
+{
+  "eula": "",
+  "vendor": "SAP",
+  "license": "",
+  "id": "com.sap.sac.sample.echarts.sankeyyg",
+  "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAACV0lEQVQ4jZ2TT0hUURTGf+f6JkcMKoS2UhERIlnzrKBCIywQhDYD1iLn9T+IFhXYZDIN1cxU1CJq4WA6umghEbQKQqghlKwZpEIING2ENi36S5aj750WakxDQfQtz7m/73C+ey+2E1f+U7YTVwvADsVOI2ZEfd/T2WR06q9EJGI25MoaRLQOpQLAACgsV9WTki/NBULx1rqWiL8YrG25dCgwWfpa8C4CeYEhALGduGa6wwKw8eCFFd6sdQXRNa64TcNd7blNocurXdyuOSfTmkmdGSxcwQCrFgrPOtsnMqlwUJF7xrMe2aFY2MUbUJW+TOV0XSG8IEuVADBeWBThvsJ+lEgJpnqop3W0sF+9N77M52MlgCVCHyAAASexVfCO4bHdqBdRMXtmcXcBo5uD18pmy/OHVQgJ1PwaNneN+hiVKhV9L9C5SEpuD3a1fl1/ILG2xNU0qqdUJCrCivnQvwDjAjXzBl695erY095z737fUMV2EmlgG4CqDovhvFoVD7LJIzO2E1dLlf5sqi1dHE4w2FcyUZ7oWIBRbiyunD6VjkZnfwsxmwo3FMOBwx2+8ZmxXkGaUaYU7RaknrdYQKHBEWM78UwhXLsvUSX5D08EaQY+IV5jNnX2ODDyzfivFs3qt4BAwImdEGUZwhZV3YFgQCfFNY3Pe9tGAMzMj6Ouzz9gh2LXM5XTp4lGPeCNFH8mhR/Azfw0sVd3wh8Le+taIkst47+L6hKjmlRjktZ8urcQPovyMp+Xh8Xggl70RD8RiewM5PxNnrBbYO49/+nwv8h24voT/SkCecEhGgkAAAAASUVORK5CYII=",
+  "version": "1.0.5",
+  "supportsMobile": true,
+  "supportsBookmark": true,
+  "supportsLinkedAnalysisFilterOnSelection": true,
+  "name": "EChartsSankeyStyling",
+  "newInstancePrefix": "EChartsSankeyStyling",
+  "description": "Sankey Chart v1.0.5 \u2013 fixed linked analysis, label wrapping, palette selector",
+  "webcomponents": [
+    {
+      "kind": "main",
+      "tag": "com-sap-sac-sample-echarts-sankeyyg",
+      "url": "/main.js",
+      "integrity": "sha256-T8bzo9RO1e4RqEWKB0bJhRO6Zcg9aerlQJR67IAK2HA=",
+      "ignoreIntegrity": false
+    },
+    {
+      "kind": "styling",
+      "tag": "com-sap-sac-sample-echarts-sankeyyg-styling",
+      "url": "/sankeyChartStyling.js",
+      "integrity": "sha256-m1sdP4YhbygiZsMA8fRhy5yFyYqG5Vr5SndIGHg2laQ=",
+      "ignoreIntegrity": false
+    }
+  ],
+  "properties": {
+    "width": {
+      "type": "integer",
+      "default": 600
+    },
+    "height": {
+      "type": "integer",
+      "default": 320
+    },
+    "depth0Settings": {
+      "type": "stylingSetting",
+      "default": {
+        "itemColor": "#348B26",
+        "lineOpacity": 0.6
+      }
+    },
+    "depth1Settings": {
+      "type": "stylingSetting",
+      "default": {
+        "itemColor": "#4FB81C",
+        "lineOpacity": 0.4
+      }
+    },
+    "depth2Settings": {
+      "type": "stylingSetting",
+      "default": {
+        "itemColor": "#93C939",
+        "lineOpacity": 0.2
+      }
+    },
+    "depth3Settings": {
+      "type": "stylingSetting",
+      "default": {
+        "itemColor": "#BCDC50",
+        "lineOpacity": 0.1
+      }
+    },
+    "colorPalette": {
+      "type": "string",
+      "default": "Default",
+      "description": "Color palette name for node auto-coloring. Options: Default, Ocean, Sunset, Forest, Corporate, Pastel"
+    }
+  },
+  "events": {
+    "onSelect": {
+      "description": "Called when the user clicks a node or flow line on the Sankey chart."
+    }
+  },
+  "methods": {
+    "getDataSource": {
+      "description": "Returns the data source bound to the widget.",
+      "parameters": [],
+      "body": "return this.dataBindings.getDataBinding('dataBinding').getDataSource();",
+      "returnType": "DataSource"
+    },
+    "addDimension": {
+      "description": "Adds a dimension to the specified feed. feed: 'dimensions'. Example: addDimension('BookingCountry', 'dimensions')",
+      "parameters": [
+        {
+          "name": "dimensionId",
+          "type": "string",
+          "description": "Technical ID of the dimension to add"
+        },
+        {
+          "name": "feed",
+          "type": "string",
+          "description": "Feed name: 'dimensions'"
+        }
+      ]
+    },
+    "removeDimension": {
+      "description": "Removes a dimension from the specified feed. Example: removeDimension('BookingCountry', 'dimensions')",
+      "parameters": [
+        {
+          "name": "dimensionId",
+          "type": "string",
+          "description": "Technical ID of the dimension to remove"
+        },
+        {
+          "name": "feed",
+          "type": "string",
+          "description": "Feed name: 'dimensions'"
+        }
+      ]
+    },
+    "addMember": {
+      "description": "Adds a measure or member to the specified feed. Example: addMember('measures', 'Amount')",
+      "parameters": [
+        {
+          "name": "feed",
+          "type": "string",
+          "description": "Feed name: 'measures'"
+        },
+        {
+          "name": "memberId",
+          "type": "string",
+          "description": "Technical ID of the measure/member to add"
+        }
+      ]
+    },
+    "removeMember": {
+      "description": "Removes a measure or member from the specified feed. Example: removeMember('measures', 'Amount')",
+      "parameters": [
+        {
+          "name": "feed",
+          "type": "string",
+          "description": "Feed name: 'measures'"
+        },
+        {
+          "name": "memberId",
+          "type": "string",
+          "description": "Technical ID of the measure/member to remove"
+        }
+      ]
+    },
+    "getSelections": {
+      "description": "Returns the last clicked node or edge as an object with dataType, name/source/target fields. Returns null if nothing clicked.",
+      "parameters": [],
+      "returnType": "string"
+    },
+    "sortByValue": {
+      "description": "Sorts Sankey flows by amount value. sortOrder: 'ascending' | 'descending'. Example: sortByValue('descending')",
+      "parameters": [
+        {
+          "name": "sortOrder",
+          "type": "string",
+          "description": "'ascending' or 'descending'"
+        }
+      ]
+    },
+    "removeSorting": {
+      "description": "Clears the active sort and restores original data order.",
+      "parameters": []
+    },
+    "rankBy": {
+      "description": "Filters to show only the top or bottom N flows by value. Example: rankBy(5, 'top')",
+      "parameters": [
+        {
+          "name": "topN",
+          "type": "integer",
+          "description": "Number of flows to show"
+        },
+        {
+          "name": "rankOrder",
+          "type": "string",
+          "description": "'top' (default) or 'bottom'"
+        }
+      ]
+    },
+    "removeRanking": {
+      "description": "Clears the Top N filter and shows all flows again.",
+      "parameters": []
+    },
+    "setEnabled": {
+      "description": "Enables or disables all click and hover interactions on the chart. Example: setEnabled(false)",
+      "parameters": [
+        {
+          "name": "enabled",
+          "type": "boolean",
+          "description": "true to enable, false to disable"
+        }
+      ]
+    },
+    "isEnabled": {
+      "description": "Returns whether user interactions are currently enabled.",
+      "parameters": [],
+      "returnType": "boolean"
+    },
+    "setContextMenuVisible": {
+      "description": "Shows or hides the right-click context menu (sort/rank options). Example: setContextMenuVisible(true)",
+      "parameters": [
+        {
+          "name": "visible",
+          "type": "boolean",
+          "description": "true to show, false to hide"
+        }
+      ]
+    }
+  },
+  "types": {
+    "stylingSetting": {
+      "description": "Styling settings for a depth level",
+      "properties": [
+        {
+          "name": "itemColor",
+          "type": "string",
+          "description": "Node color"
+        },
+        {
+          "name": "lineOpacity",
+          "type": "number",
+          "description": "Flow line opacity"
+        }
+      ]
+    }
+  },
+  "dataBindings": {
+    "dataBinding": {
+      "feeds": [
+        {
+          "id": "dimensions",
+          "description": "Dimensions \u2013 add SOURCE dimension first (e.g. Client Domicile Country), then TARGET dimension (e.g. Booking Country).",
+          "type": "dimension"
+        },
+        {
+          "id": "measures",
+          "description": "Measures \u2013 flow value (e.g. Amount)",
+          "type": "mainStructureMember"
+        }
+      ]
+    }
+  }
+}
